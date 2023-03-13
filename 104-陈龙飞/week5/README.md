@@ -2,4 +2,4 @@
 
 2.将代码修改前后的输出结果以txt的形式上传，方面对比
 
-3.其余代码为word2vec_kmeans_homework.py运行所需文件
+3.其余文件为word2vec_kmeans_homework.py运行所需文件
