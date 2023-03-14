@@ -1,9 +1,9 @@
-#!/usr/bin/env python3  
 # coding: utf-8
 
 # 基于训练好的词向量模型进行聚类
 # 聚类采用Kmeans算法
 # 结果按类内平均距离排序后输出
+# 类内平均距离计算采用欧式距离
 import math
 import jieba
 import numpy as np
@@ -46,12 +46,6 @@ def sentences_to_vectors(sentences, model):
     return np.array(vectors)
 
 
-# 计算质心
-def __center(ndarray):
-    # return np.array(list).mean(axis=0)
-    return ndarray.mean(axis=0)
-
-
 # 计算两点间距离
 def __distance(p1, p2):
     tmp = 0
@@ -85,7 +79,7 @@ def main():
     sentence_label_avgdis_dict = defaultdict(tuple)
     for label, sentences in sentence_label_dict.items():
         vectors = sentences_to_vectors(sentences, model)  # 将当前label下的标题向量化
-        center = __center(vectors)  # 计算当前label的质心
+        center = kmeans.cluster_centers_[label]  # 获取当前label的质心
         avgdis = __avgdis(vectors, center)  # 计算类内平均距离
         sentence_label_avgdis_dict[label] = (sentences, avgdis)  # 同标签的标题和类内平均距离放到一起
 
