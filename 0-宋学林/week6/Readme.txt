@@ -1,0 +1,4 @@
+实现一个基于语言模型的文本纠错
+可以基于ngram模型实现，也可以基于神经网络模型
+ngram_language_model文件已经实现了ngram语言模型
+在word_correction中完成纠错逻辑
