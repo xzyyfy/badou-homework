@@ -1,0 +1,60 @@
+import json
+import copy
+from ngram_language_model import NgramLanguageModel
+
+
+"""
+文本纠错demo
+加载同音字字典
+加载语言模型
+基本原理：
+对于文本中每一个字，判断在其同音字中是否有其他字，在替换掉该字时，能使得语言模型计算的成句概率提高
+"""
+
+
+class Corrector:
+    def __init__(self, language_model):
+        #语言模型
+        self.language_model = language_model
+        #候选字字典
+        self.sub_dict = self.load_tongyinzi("tongyin.txt")
+        #成句概率的提升超过阈值则保留修改
+        self.threshold = 7
+
+    #实际上不光是同音字，同形字等也可以加入，本质上是常用的错字
+    def load_tongyinzi(self, path):
+        tongyinzi_dict = {}
+        with open(path, encoding="utf8") as f:
+            for line in f:
+                char, tongyin_chars = line.split()
+                tongyinzi_dict[char] = list(tongyin_chars)    #list(tongyin_chars)会自动将每个字符单独隔开
+        return tongyinzi_dict   #读取tongyin.txt，形成一个同音字的字典
+
+    #纠错逻辑：遍历string中的每个字符，看是否字典里有同音字？ 有的话，遍历替换每个字并计算概率，最后找到成句概率最大的那句
+    def correction(self, string):
+        # 自己尝试实现
+        len_str = len(string)
+        old_sen_prob = self.language_model.predict(string) #旧句子的成句概率
+        old_sen = string  #旧句子
+        new_sen = string  #新句子
+        for i in range(len_str):
+            judge_char = old_sen[i]
+            if judge_char in self.sub_dict.keys():
+                tongyinzi = self.sub_dict[judge_char]  #返回当前字的所有同音字取出为tongyinzi
+                for char in tongyinzi:
+                    new_sen = old_sen[:i] + char + old_sen[i + 1:]  #形成新句子
+                    new_sen_prob = self.language_model.predict(new_sen) #新句子的成句概率
+                    if new_sen_prob > old_sen_prob:  #如果新句子的成句概率大于旧句子
+                        old_sen = new_sen
+                        old_sen_prob = new_sen_prob
+        return old_sen
+
+
+corpus = open("财经.txt", encoding="utf8").readlines()
+lm = NgramLanguageModel(corpus, 3)
+
+cr = Corrector(lm)
+string = "每国货币政册空间不大"  #美国货币政策空间不大
+fix_string = cr.correction(string)
+print("修改前：", string)
+print("修改后：", fix_string)
