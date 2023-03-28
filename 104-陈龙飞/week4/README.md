@@ -1,2 +1,0 @@
-基于LSTM实现中文分词
-segmentation_based_on_lstm.py
