@@ -6,7 +6,7 @@ from torch.optim import Adam, SGD
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 """
-建立网络模型结构
+建立网络模型结构，再forward中增加if sentence3 的判断，是否选择使用cosine_triplet_loss
 """
 
 
