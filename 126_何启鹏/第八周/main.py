@@ -15,7 +15,7 @@ logging.basicConfig(level = logging.INFO,format = '%(asctime)s - %(name)s - %(le
 logger = logging.getLogger(__name__)
 
 """
-模型训练主程序
+模型训练主程序，增加config["cosine_triplet_loss"]的判断
 """
 
 def main(config):
@@ -45,10 +45,10 @@ def main(config):
             optimizer.zero_grad()
             if cuda_flag:
                 batch_data = [d.cuda() for d in batch_data]
-            if config["cosine_triplet_loss"]:
-                input_id1, input_id2, input_id3, labels = batch_data
+            if config["cosine_triplet_loss"]:  # 如果计算triplet_loss，batch_data中包含3句话
+                input_id1, input_id2, input_id3, labels = batch_dat3
             else:
-                input_id1, input_id2, labels = batch_data   #输入变化时这里需要修改，比如多输入，多输出的情况
+                input_id1, input_id2, labels = batch_data   #否则input_id3 = None
                 input_id3 = None
             loss = model(input_id1, input_id2, input_id3, labels)
             train_loss.append(loss.item())
